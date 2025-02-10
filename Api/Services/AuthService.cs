@@ -14,10 +14,15 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 {
     public bool IsUnique(string email)
     {
-        throw new NotImplementedException();
+        if (context.Users.Any(u => u.Email == email))
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    public async Task<string?> LoginAsync(LoginRequestDto loginRequestDto)
+    public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto loginRequestDto)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginRequestDto.Email);
 
@@ -32,14 +37,22 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             return null;
         }
 
-        return CreateToken(user);   
+        return new LoginResponseDto
+        {
+            Email = user.Email,
+            Token = CreateToken(user)
+        };
     }
 
-    public async Task<User?> RegisterAsync(RegistrationRequestDto registrationRequestDto)
+    public async Task<RegistrationResponseDto> RegisterAsync(RegistrationRequestDto registrationRequestDto)
     {
         if (await context.Users.AnyAsync(u => u.Email == registrationRequestDto.Email))
         {
-            return null;
+            return new RegistrationResponseDto
+            {
+                Email = registrationRequestDto.Email,
+                IsSuccessful = false
+            };
         }
 
         var user = new User();
@@ -54,7 +67,11 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        return user;    
+        return new RegistrationResponseDto
+        {
+            Email = user.Email,
+            IsSuccessful = true
+        };
     }
 
         private string CreateToken(User user)

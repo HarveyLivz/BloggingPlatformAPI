@@ -6,7 +6,7 @@ namespace Api.Services
     public interface IAuthService
     {
         public bool IsUnique(string email);
-        public Task<User?> RegisterAsync(RegistrationRequestDto registrationRequestDto);
-        public Task<string?> LoginAsync(LoginRequestDto loginRequestDto);
+        public Task<RegistrationResponseDto> RegisterAsync(RegistrationRequestDto registrationRequestDto);
+        public Task<LoginResponseDto?> LoginAsync(LoginRequestDto loginRequestDto);
     }
 }

@@ -1,8 +1,6 @@
-using System.Threading.Tasks;
 using Api.DTOs;
 using Api.Entities;
 using Api.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
