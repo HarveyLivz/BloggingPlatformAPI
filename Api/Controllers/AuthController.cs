@@ -11,7 +11,7 @@ namespace Api.Controllers
     {
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register([FromBody] RegistrationRequestDto registrationRequestDto)
+        public async Task<ActionResult<RegistrationResponseDto>> Register([FromBody] RegistrationRequestDto registrationRequestDto)
         {
             var user = await authService.RegisterAsync(registrationRequestDto);
 
