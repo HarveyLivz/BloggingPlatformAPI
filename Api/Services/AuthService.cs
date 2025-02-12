@@ -74,13 +74,13 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         };
     }
 
-        private string CreateToken(User user)
+    private string CreateToken(User user)
+    {
+        var claims = new List<Claim>
         {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            };
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+        };
 
         var keyString = configuration.GetValue<string>("JwtSettings:Key");
         if (string.IsNullOrEmpty(keyString))
@@ -100,5 +100,5 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         );
 
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-        }
+    }
 }

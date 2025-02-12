@@ -13,7 +13,7 @@ var config = builder.Configuration;
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
-// auth service
+// 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configure authentication
