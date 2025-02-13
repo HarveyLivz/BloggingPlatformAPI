@@ -1,5 +1,3 @@
-using Api.Enums;
-
 namespace Api.Entities
 {
     public class User
