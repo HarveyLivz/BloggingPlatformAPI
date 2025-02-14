@@ -1,4 +1,5 @@
 using Api.DTOs;
+using Api.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,16 +24,28 @@ namespace Api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(LoginRequestDto loginRequestDto)
+        public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto loginRequestDto)
         {
-            var token = await authService.LoginAsync(loginRequestDto);
+            var result = await authService.LoginAsync(loginRequestDto);
 
-            if (token is null)
+            if (result is null)
             {
                 return BadRequest("Invalid email or password.");
             }
 
-            return Ok(token);
+            return Ok(result);
+        }
+
+        [HttpPost("refreshtoken")]
+        public async Task<ActionResult<LoginResponseDto>> RefreshToken(RefreshTokenRequestDto refreshTokenRequestDto)
+        {
+            var result = await authService.RefreshTokenAsync(refreshTokenRequestDto);
+            if (result is null || result.AccessToken is null || result.RefreshToken is null)
+            {
+                return Unauthorized("Invalid refresh token.");
+            }
+
+            return Ok(result);
         }
 
     }
