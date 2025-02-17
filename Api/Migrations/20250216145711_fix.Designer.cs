@@ -4,6 +4,7 @@ using Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250216145711_fix")]
+    partial class fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,12 +57,13 @@ namespace Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("AuthorId")
+                        .IsUnique();
 
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("Api.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -96,18 +100,18 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Entities.Post", b =>
                 {
-                    b.HasOne("User", "Author")
-                        .WithMany("Posts")
-                        .HasForeignKey("AuthorId")
+                    b.HasOne("Api.Entities.User", "Author")
+                        .WithOne("Post")
+                        .HasForeignKey("Api.Entities.Post", "AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("Api.Entities.User", b =>
                 {
-                    b.Navigation("Posts");
+                    b.Navigation("Post");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,9 +16,9 @@ namespace Api.Data
         {
             modelBuilder.Entity<Post>()
                 .HasOne(p => p.Author)
-                .WithOne(u => u.Post)
-                .HasForeignKey<Post>(p => p.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade); // Adjust delete behavior as needed
+                .WithMany(u => u.Posts)
+                .HasForeignKey(p => p.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

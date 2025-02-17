@@ -1,8 +1,8 @@
-﻿using Api.DTOs;
-using Api.Models;
-using Api.Services;
+﻿using Api.Models;
 using Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -10,12 +10,30 @@ namespace Api.Controllers
     [ApiController]
     public class PostController(IPostService postService) : ControllerBase
     {
+        [Authorize]
         [HttpPost("create")]
-        public async Task<ActionResult<CreatePostResponseDto>> Create([FromBody] CreatePostRequestDto createPostRequsetDto)
+        public async Task<IActionResult> CreatePost(CreatePostRequestDto request)
         {
-            var post = await postService.CreatePost(createPostRequsetDto);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            return post;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User not authenticated");
+            }
+
+            var result = await postService.CreatePost(request, Guid.Parse(userId));
+            return Ok(result);
         }
+
+
+        [Authorize]
+        [HttpGet("getbyid")]
+        public async Task<IActionResult> GetPostById(Guid id)
+        {
+
+
+        }
+
     }
 }
