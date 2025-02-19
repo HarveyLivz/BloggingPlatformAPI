@@ -1,4 +1,5 @@
-﻿using Api.Models;
+﻿using Api.Entities;
+using Api.Models;
 using Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,12 +29,21 @@ namespace Api.Controllers
 
 
         [Authorize]
-        [HttpGet("getbyid")]
-        public async Task<IActionResult> GetPostById(Guid id)
+        [HttpDelete("delete/{postId}")]
+        public async Task<IActionResult> DeletePost(Guid postId)
         {
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (string.IsNullOrEmpty(authorId))
+            {
+                return Unauthorized("User not authenticated");
+            }
 
+            var result = await postService.DeletePostById(postId, Guid.Parse(authorId));
+
+            return Ok(result);
         }
+
 
     }
 }

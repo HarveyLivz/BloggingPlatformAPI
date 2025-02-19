@@ -2,6 +2,8 @@
 using Api.Entities;
 using Api.Models;
 using Api.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Services
@@ -39,6 +41,36 @@ namespace Api.Services
                 Title = post.Title,
                 Content = post.Content
             };
+        }
+
+        public async Task<object> DeletePostById(Guid postId, Guid authorId)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+
+            if (post == null)
+            {
+                return new { message = "Post not found!", StatusCode = 404 };
+            }
+
+            if (post.AuthorId != authorId)  // Ensure the Post entity has authorId
+            {
+                return new { message = "You can only delete your own posts!", StatusCode = 403 };
+            }
+
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+
+            return new { message = "Post deleted successfully", StatusCode = 200 };
+        }
+
+        public Task<CreatePostResponseDto?> GetAllPostsByUserId(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CreatePostRequestDto> GetPostByPostId(Guid postId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
