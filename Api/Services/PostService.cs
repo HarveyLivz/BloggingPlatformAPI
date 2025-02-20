@@ -2,8 +2,6 @@
 using Api.Entities;
 using Api.Models;
 using Api.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Services
@@ -19,7 +17,6 @@ namespace Api.Services
 
         public async Task<CreatePostResponseDto?> CreatePost(CreatePostRequestDto createPostRequestDto, Guid userId)
         {
-            // Ensure the logged-in user exists
             var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
             if (!userExists)
             {
@@ -30,7 +27,7 @@ namespace Api.Services
             {
                 Title = createPostRequestDto.Title,
                 Content = createPostRequestDto.Content,
-                AuthorId = userId 
+                AuthorId = userId
             };
 
             _context.Posts.Add(post);
@@ -52,7 +49,7 @@ namespace Api.Services
                 return new { message = "Post not found!", StatusCode = 404 };
             }
 
-            if (post.AuthorId != authorId)  // Ensure the Post entity has authorId
+            if (post.AuthorId != authorId)
             {
                 return new { message = "You can only delete your own posts!", StatusCode = 403 };
             }
@@ -63,9 +60,11 @@ namespace Api.Services
             return new { message = "Post deleted successfully", StatusCode = 200 };
         }
 
-        public Task<CreatePostResponseDto?> GetAllPostsByUserId(Guid userId)
+        public async Task<List<Post>> GetAllPostsByUserId(Guid authorId)
         {
-            throw new NotImplementedException();
+            return await _context.Posts
+                .Where(p => p.AuthorId == authorId)
+                .ToListAsync();
         }
 
         public Task<CreatePostRequestDto> GetPostByPostId(Guid postId)

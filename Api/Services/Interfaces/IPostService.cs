@@ -1,4 +1,5 @@
-﻿using Api.Models;
+﻿using Api.Entities;
+using Api.Models;
 
 namespace Api.Services.Interfaces
 {
@@ -10,7 +11,7 @@ namespace Api.Services.Interfaces
         // TODO: Get All Posts
         Task<CreatePostResponseDto?> CreatePost(CreatePostRequestDto createPostRequestDto, Guid userId);
         Task<object> DeletePostById(Guid postId, Guid authorId);
-        Task<CreatePostResponseDto?> GetAllPostsByUserId(Guid userId);
+        Task<List<Post>> GetAllPostsByUserId(Guid authorId);
         Task<CreatePostRequestDto> GetPostByPostId(Guid postId);
 
 
